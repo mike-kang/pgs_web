@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>QdisPlayer RTSP player example</title>
+    <link rel="stylesheet" href="css/style.css">
+    <script src="js/scroll-div.js" defer=""></script>
+    <script src="js/areas-editor.js" defer=""></script>
+    <script src="js/areas-editor2.js" defer=""></script>
+</head>
+<body>
+    <div style="margin-left: 50px;">
+        <div is="areas-editor2" id="areas-editor" style="width:1000px; height:1000px; position:relative; overflow:auto" background="capture-img">
+            <img id="capture-img" style="width:2000px; height:2000px" src="capture.jpg">
+        </div>
+    </div>
+    <div>
+    <select id="id_area_index">
+      <option value="1">1</option>
+      <option value="2">2</option>
+      <option value="3">3</option>
+      <option value="4">4</option>
+      <option value="5">5</option>
+      <option value="6">6</option>
+      <option value="7">7</option>
+    </select>
+    </div>
+    <div>
+      <span style="margin-left: 170px;">
+        <input class="btn" type="button" value="Set"
+          style="margin: 0px 5px; padding: 0px 5px;" onclick="btn_set_click()">
+        <input class="btn" type="button" value="Cancel"
+          style="margin: 0px 5px; padding: 0px 5px;" onclick="btn_cancel_click()">
+        <input class="btn" type="button" value="Back"
+          style="margin: 0px 5px; padding: 0px 5px;" onclick="btn_back_click()">
+        <input class="btn" type="button" value="Remove"
+          style="margin: 0px 5px; padding: 0px 5px;" onclick="btn_remove_click()">     
+        <input class="btn" type="button" value="getAreas"
+          style="margin: 0px 5px; padding: 0px 5px;" onclick="btn_getAreas_click()">     
+        <input class="btn" type="button" id="btn_switch" value="transfer"
+          style="margin: 0px 5px; padding: 0px 5px;" onclick="btn_mode_switch_click()">     
+      </span>
+    </div>
+    <script>
+      let editor = document.getElementById("areas-editor");
+      function btn_set_click(){
+        let id = document.getElementById("id_area_index").value - 1;
+        editor.areaSet(id);
+      }
+      function btn_cancel_click(){
+        let id = document.getElementById("id_area_index").value - 1;
+        editor.areaCancel(id);
+      }
+      function btn_back_click(){
+        let id = document.getElementById("id_area_index").value - 1;
+        editor.areaBack(id);
+      }
+      function btn_remove_click(){
+        let id = document.getElementById("id_area_index").value - 1;
+        editor.areaRemove(id);
+      }
+      function btn_getAreas_click(){
+        let id = document.getElementById("id_area_index").value - 1;
+        editor.getAreas();
+      }
+      function btn_mode_switch_click(){
+          let btn = document.getElementById("btn_switch");
+          console.log("btn_switch_click", btn.value);
+          if(btn.value == 'transfer'){
+            editor.setMode(AreasEditorDiv2.MODE_TRANSFER);
+            btn.value = 'normal';
+          }
+          else{
+            editor.setMode(AreasEditorDiv2.MODE_NORMAL);
+            btn.value = 'transfer';
+          }
+
+        }
+      window.addEventListener("keydown", (ev) => {
+        console.log("keydown", ev.keyCode);
+        let id = document.getElementById("id_area_index").value - 1;
+        switch(ev.keyCode){
+        case 13:/*enter*/
+          editor.areaSet(id)
+          break;
+        case 8:/*back space*/
+          editor.areaBack(id)
+          break;
+        case 27:/*esc*/
+          editor.areaCancel(id)
+          break;
+        }
+      });
+
+      </script>
+</body>
+</html>

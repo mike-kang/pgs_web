@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>QdisPlayer RTSP player example</title>
+    <link rel="stylesheet" href="css/style.css">
+    <script src="js/scroll-div.js" defer=""></script>
+    <script src="js/areas-editor.js" defer=""></script>
+    <script src="js/areas-monitor.js" defer=""></script>
+    <script src="js/ws-stream/player.js"></script>
+</head>
+<body>
+    <div style="margin-left: 50px;">
+      <div is="areas-editor" id="areas-editor" style="width:1000px; height:1000px; position:relative; overflow:auto" background="capture-img">
+        <img id="capture-img" style="width:2000px; height:2000px" src="capture.jpg">
+      </div>
+      <div is="areas-monitor" id="areas-monitor" style="width:1000px; height:1000px; position:relative; overflow:auto; display:none" background="qdis-player">
+        <video id="qdis-player" style="width:2000px; height:2000px" controls autoplay muted="muted" onresize="videoResize()">
+          해당 브라우저는 스트리밍을 지원하지 않습니다.
+        </video>
+      </div>
+    </div>
+    <div>
+      <select id="id_area_index">
+        <option value="1">1</option>
+        <option value="2">2</option>
+        <option value="3">3</option>
+        <option value="4">4</option>
+        <option value="5">5</option>
+        <option value="6">6</option>
+        <option value="7">7</option>
+      </select>
+      </div>
+      <div>
+        <span style="margin-left: 170px;">
+          <input class="btn" type="button" value="Set"
+            style="margin: 0px 5px; padding: 0px 5px;" onclick="btn_set_click()">
+          <input class="btn" type="button" value="Cancel"
+            style="margin: 0px 5px; padding: 0px 5px;" onclick="btn_cancel_click()">
+          <input class="btn" type="button" value="Back"
+            style="margin: 0px 5px; padding: 0px 5px;" onclick="btn_back_click()">
+          <input class="btn" type="button" value="Remove"
+            style="margin: 0px 5px; padding: 0px 5px;" onclick="btn_remove_click()">     
+          <input class="btn" type="button" value="getAreas"
+            style="margin: 0px 5px; padding: 0px 5px;" onclick="btn_getAreas_click()">     
+          <input class="btn" type="button" id="btn_switch" value="monitor"
+            style="margin: 0px 5px; padding: 0px 5px;" onclick="btn_switch_click()">     
+        </span>
+      </div>
+      <script>
+        let editor = document.getElementById("areas-editor");
+        let monitor = document.getElementById("areas-monitor");
+        function btn_set_click(){
+          let id = document.getElementById("id_area_index").value - 1;
+          editor.areaSet(id);
+        }
+        function btn_cancel_click(){
+          let id = document.getElementById("id_area_index").value - 1;
+          editor.areaCancel(id);
+        }
+        function btn_back_click(){
+          let id = document.getElementById("id_area_index").value - 1;
+          editor.areaBack(id);
+        }
+        function btn_remove_click(){
+          let id = document.getElementById("id_area_index").value - 1;
+          editor.areaRemove(id);
+        }
+        function btn_getAreas_click(){
+          let id = document.getElementById("id_area_index").value - 1;
+          editor.getAreas();
+        }
+        function btn_switch_click(){
+          let btn = document.getElementById("btn_switch");
+          console.log("btn_switch_click", btn.value);
+          if(btn.value == 'monitor'){
+            editor.style.display = 'none';
+            monitor.style.display = 'block';
+            btn.value = 'editor'
+            setPlayerSource('rtsp://' + '192.168.150.237' + '/' + 'ch0');
+          }
+          else{
+            editor.style.display = 'block';
+            monitor.style.display = 'none';
+            btn.value = 'monitor'
+            if (wsPlayer) {
+              wsPlayer.destroy();
+              wsPlayer = null;
+            }
+
+          }
+
+        }
+        window.addEventListener("keydown", (ev) => {
+          console.log("keydown");
+          let id = document.getElementById("id_area_index").value - 1;
+          switch(ev.keyCode){
+          case 13:/*enter*/
+            editor.areaSet(id)
+            break;
+          case 8:/*back space*/
+            editor.areaSet(id)
+            break;
+          case 27:/*esc*/
+            editor.areaCancel(id)
+            break;
+          }
+        });
+        function videoResize(){
+          console.log("**********videoResize", event);
+        }
+        </script>
+  
+
+    <script>
+    /////////////////// 소켓 스트리밍 초기화 //////////////////
+    var wsPlayer;
+
+    function setPlayerSource(newSource) {
+        console.log('setPlayerSource() !!!');
+        let qdisPlayer = document.getElementById('qdis-player');
+
+        if (wsPlayer) {
+            wsPlayer.destroy();
+        }
+
+        let errHandler = function (err) {
+            alert(err.message);
+        };
+
+        let formatHandler = function (format) {
+            if (qdisPlayer) {
+                qdisPlayer.removeAttribute('hidden');
+            }
+        }
+        let hostName = newSource.split('/')[2];
+        var option = {
+            socket: 'ws://' + hostName + ':8088/',
+            redirectNativeMediaErrors: true,
+            bufferDuration: 120,
+            errorHandler: errHandler,
+            videoFormatHandler: formatHandler
+        };
+
+        qdisPlayer.src = newSource;
+
+        wsPlayer = null;
+        wsPlayer = WsPlayerBuilder.builder(qdisPlayer, option);
+    }
+    </script>
+</body>
+</html>
+</body>
+</html>
+

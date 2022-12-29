@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>QdisPlayer RTSP player example</title>
+    <link rel="stylesheet" href="css/style.css">
+    <script src="js/scroll-div.js" defer=""></script>
+    <script src="js/areas-monitor.js" defer=""></script>
+    <script src="js/ws-stream/player.js"></script>
+</head>
+<body>
+    <div style="margin-left: 50px;">
+        <div is="areas-monitor" style="width:1000px; height:1000px; position:relative; overflow:auto" background="qdis-player">
+          <video id="qdis-player" style="width:2000px; height:2000px" controls autoplay muted="muted">
+            해당 브라우저는 스트리밍을 지원하지 않습니다.
+        </video>
+    </div>
+    </div>
+    <script>
+    /////////////////// 소켓 스트리밍 초기화 //////////////////
+    var hostName;
+    var channel;
+    var codec;
+    var wsPlayer;
+
+    window.addEventListener('DOMContentLoaded', () => {
+      processFn();
+    });
+
+    function processFn(event) {
+        console.log('processFn()', event);
+
+        // if (!'data' in event)
+        //     return;
+
+        // var sJson = event.data;
+        // console.log(sJson);
+
+        // TODO : URL, 채널, 영상정보 수신부 구현 필요. 현재 임시 상수 적용
+        //hostName = '106.248.203.183';
+        hostName = '192.168.150.237';
+
+        channel = 'ch0';
+        codec = 'H264';
+
+        // hostName = sJson.ip;
+        // channel = sJson.name;
+
+        if (codec == 'H265') {
+            console.log('codec is H265. show nothing');
+            // player.stop();
+        } else if (codec == 'H264') {
+            console.log('codec is H264');
+            console.log('window.WsPlayerBuilder is ', window.WsPlayerBuilder);
+
+            if (window.WsPlayerBuilder) {
+                setPlayerSource('rtsp://' + hostName + '/' + channel);
+
+                // Tab switching and window minimization processing 
+                // for browsers that use the chrome rendering engine.
+                if (!!window.chrome) {
+                    document.addEventListener('visibilitychange', function () {
+                        if (true) {
+                            if (document.visibilityState === 'hidden') {
+                                console.log('visibilitychanged HIDDEN!');
+        
+                                if (wsPlayer) {
+                                    wsPlayer.stop();
+                                }
+                            } else {
+                                console.log('visibilitychanged VISIBLE!');
+        
+                                setPlayerSource('rtsp://' + hostName + '/' + channel);
+                            }
+                        }
+                    });
+                }
+            }
+        }
+    }
+
+    function setPlayerSource(newSource) {
+        console.log('setPlayerSource() !!!');
+        let qdisPlayer = document.getElementById('qdis-player');
+
+        if (wsPlayer) {
+            wsPlayer.destroy();
+        }
+
+        let errHandler = function (err) {
+            alert(err.message);
+        };
+
+        let formatHandler = function (format) {
+            if (qdisPlayer) {
+                qdisPlayer.removeAttribute('hidden');
+            }
+        }
+
+        var option = {
+            socket: 'ws://' + hostName + ':8088/',
+            // socket: 'ws://115.94.37.213:8088/',
+            redirectNativeMediaErrors: true,
+            bufferDuration: 120,
+            errorHandler: errHandler,
+            videoFormatHandler: formatHandler
+        };
+
+        qdisPlayer.src = newSource;
+
+        wsPlayer = null;
+        wsPlayer = WsPlayerBuilder.builder(qdisPlayer, option);
+    }
+    </script>
+</body>
+</html>
+</body>
+</html>
+
