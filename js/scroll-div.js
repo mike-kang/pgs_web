@@ -58,7 +58,7 @@ class ScrollDiv extends HTMLDivElement {
 
   wheelHandler(event){
     console.log('zoom', event.deltaY);
-    if (event.altKey) {
+    if (event.ctrlKey) {
         event.preventDefault();
         this.changeBackgroundSize(event.deltaY);
     }
