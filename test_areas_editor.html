@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <title>QdisPlayer RTSP player example</title>
     <link rel="stylesheet" href="css/style.css">
-    <script src="js/scroll-div.js" defer=""></script>
+    <script src="js/zoom-div.js" defer=""></script>
     <script src="js/areas-editor.js" defer=""></script>
 </head>
 <body>
@@ -62,7 +62,7 @@
         editor.getAreas();
       }
       window.addEventListener("keydown", (ev) => {
-        console.log("keydown");
+        //console.log("keydown");
         let id = document.getElementById("id_area_index").value - 1;
         switch(ev.keyCode){
         case 13:/*enter*/

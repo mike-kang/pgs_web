@@ -1,4 +1,4 @@
-class AreasEditorDiv extends ScrollDiv {
+class AreasEditorDiv extends ZoomDiv {
   static TAG = '[AreasEditorDiv]';
   constructor() {
       super();
@@ -79,7 +79,7 @@ class AreasEditorDiv extends ScrollDiv {
   }
 
   onCanvasResize(){
-    console.log(AreasEditorDiv.TAG, "resize");
+    //console.log(AreasEditorDiv.TAG, "onCanvasResize");
     this.drawAreas();
   }
   onCanvasMove(){

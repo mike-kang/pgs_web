@@ -1,12 +1,12 @@
-class ScrollDiv extends HTMLDivElement {
-  static TAG = '[ScrollDiv]';
+class ZoomDiv extends HTMLDivElement {
+  static TAG = '[ZoomDiv]';
   constructor() {
       super();
-      console.log(ScrollDiv.TAG, this);
+      console.log(ZoomDiv.TAG, this);
   }
 
   connectedCallback() {
-      console.log(ScrollDiv.TAG, 'connectedCallback()');
+      console.log(ZoomDiv.TAG, 'connectedCallback()');
       this.canvas = document.createElement('canvas');
       this.canvas_ctx = this.canvas.getContext('2d');
       this.background = document.getElementById(this.getAttribute('background'));
@@ -57,7 +57,7 @@ class ScrollDiv extends HTMLDivElement {
   }
 
   wheelHandler(event){
-    console.log('zoom', event.deltaY);
+    //console.log('zoom', event.deltaY);
     if (event.ctrlKey) {
         event.preventDefault();
         this.changeBackgroundSize(event.deltaY);
@@ -150,4 +150,4 @@ class ScrollDiv extends HTMLDivElement {
 
 }
 
-customElements.define('scroll-div', ScrollDiv, {extends: 'div'});
+customElements.define('zoom-div', ZoomDiv, {extends: 'div'});
