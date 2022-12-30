@@ -1,4 +1,5 @@
 class Point {
+  //정규화된 점이다.
   constructor(x, y){
     this.x = x;
     this.y = y;
@@ -39,6 +40,10 @@ class AreasEditorDiv extends ZoomDiv {
 
   }
 
+  setAreasChangeListener(areaUpdateListener, areaRemoveListener){
+    this.areaUpdateListener = areaUpdateListener;
+    this.areaRemoveListener = areaRemoveListener;
+  }
   clickHandler(me)    {
     console.log(AreasEditorDiv.TAG, "canvas click", me.offsetX/this.canvas.width, me.offsetY/this.canvas.height);
     //moving이 발생하면 해당 click 무시.
@@ -67,11 +72,9 @@ class AreasEditorDiv extends ZoomDiv {
       return;
     }
     this.areas[id] = {path:this.temp_area_path};
-    //for(let i = 0; i < this.temp_area_path.length; i++){
-    //
-    //}
     this.temp_area_path = [];    
     this.drawAreas();
+    this.areaUpdateListener(id + 1, this.areas[id].path);
 
   }
   areaCancel(){
@@ -81,6 +84,7 @@ class AreasEditorDiv extends ZoomDiv {
   areaRemove(id){
     this.areas[id] = null;
     this.drawAreas();
+    this.areaRemoveListener(id + 1);
   }
   areaBack(id){
     this.temp_area_path.pop();
@@ -90,15 +94,18 @@ class AreasEditorDiv extends ZoomDiv {
     console.log(this.areas);
     return this.areas;
   }
+  //정규화된 점들로 이뤄진 path를 가진 area의 배열
   setAreas(areas){
     for(let i = 0; i < areas.length; i++){
       if(areas[i] == null){
         this.areas[i] = null;
       }
       else{
-        this.areas[i].path = JSON.parse(JSON.stringify(areas[i]));
+        this.areas[i].path = areas[i].path;
       }
     }
+    this.temp_area_path = [];    
+
     this.drawAreas();
   }
 
