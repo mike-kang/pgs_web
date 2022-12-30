@@ -1,4 +1,4 @@
-class AreasMonitorDiv extends ScrollDiv {
+class AreasMonitorDiv extends ZoomDiv {
   constructor() {
       super();
       this.TAG = '[AreasMonitorDiv]';
