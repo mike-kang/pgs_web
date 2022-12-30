@@ -1,3 +1,24 @@
+class Point {
+  constructor(x, y){
+    this.x = x;
+    this.y = y;
+  }
+  distance(p){
+    let dx = p.x - this.x;
+    let dy = p.y - this.y;
+    return Math.sqrt( dx * dx + dy * dy );
+  }
+  calAngle(origin){
+    return Math.atan2(this.y - origin.y, this.x - origin.x);
+  }
+  addAngle(origin, delta_angle){
+    let x = this.x - origin.x;
+    let y = this.y - origin.y;
+    this.x = x * Math.cos(delta_angle) - y * Math.sin(delta_angle) + origin.x;
+    this.y = x * Math.sin(delta_angle) + y * Math.cos(delta_angle) + origin.y;
+  }
+}
+
 class AreasEditorDiv extends ZoomDiv {
   static TAG = '[AreasEditorDiv]';
   constructor() {
@@ -13,7 +34,7 @@ class AreasEditorDiv extends ZoomDiv {
     for(let i = 0; i < 20; i++){
       this.areas[i] = null;
     }
-    this.temp_area = [];
+    this.temp_area_path = [];
     this.addEventListener( "click" , this.clickHandler, false);
 
   }
@@ -30,28 +51,31 @@ class AreasEditorDiv extends ZoomDiv {
 
     this.canvas_ctx.beginPath();
     this.canvas_ctx.arc(me.offsetX , me.offsetY, 5, 0, Math.PI * 2);
-    if(this.temp_area.length > 0){
-      this.canvas_ctx.moveTo(this.temp_area[this.temp_area.length-1].x * this.canvas.width , this.temp_area[this.temp_area.length-1].y * this.canvas.height);
+    if(this.temp_area_path.length > 0){
+      this.canvas_ctx.moveTo(this.temp_area_path[this.temp_area_path.length-1].x * this.canvas.width , this.temp_area_path[this.temp_area_path.length-1].y * this.canvas.height);
       this.canvas_ctx.lineTo(me.offsetX , me.offsetY);
       this.canvas_ctx.stroke();
     }
     this.canvas_ctx.fill();
-    this.temp_area.push({"x":me.offsetX/this.canvas.width, "y":me.offsetY/this.canvas.height});
+    this.temp_area_path.push(new Point(me.offsetX / this.canvas.width, me.offsetY / this.canvas.height));
 
   }
 
   areaSet(id){
-    if(this.temp_area.length < 3){
+    if(this.temp_area_path.length < 3){
       this.areaCancel();
       return;
     }
-    this.areas[id] = JSON.parse(JSON.stringify(this.temp_area));
-    this.temp_area = [];    
+    this.areas[id] = {path:this.temp_area_path};
+    //for(let i = 0; i < this.temp_area_path.length; i++){
+    //
+    //}
+    this.temp_area_path = [];    
     this.drawAreas();
 
   }
   areaCancel(){
-    this.temp_area = [];
+    this.temp_area_path = [];
     this.drawAreas();
   }
   areaRemove(id){
@@ -59,7 +83,7 @@ class AreasEditorDiv extends ZoomDiv {
     this.drawAreas();
   }
   areaBack(id){
-    this.temp_area.pop();
+    this.temp_area_path.pop();
     this.drawAreas();
   }
   getAreas(){
@@ -72,7 +96,7 @@ class AreasEditorDiv extends ZoomDiv {
         this.areas[i] = null;
       }
       else{
-        this.areas[i] = JSON.parse(JSON.stringify(areas[i]));
+        this.areas[i].path = JSON.parse(JSON.stringify(areas[i]));
       }
     }
     this.drawAreas();
@@ -101,12 +125,12 @@ class AreasEditorDiv extends ZoomDiv {
     for(let i = 0; i < this.areas.length; i++){
       let area = this.areas[i];
       if(area != null){
-        this.drawArea(area);
+        this.drawArea(area.path);
 
         //display id
         let center_x = 0;
         let center_y = 0;
-        area.forEach(point => {
+        area.path.forEach(point => {
           center_x += point.x * this.canvas.width;
           center_y += point.y * this.canvas.height;
         });
@@ -117,33 +141,33 @@ class AreasEditorDiv extends ZoomDiv {
         //canvas_ctx.strokeText(i + 1, center_x, center_y);
       }
     }
-    //temp_area
-    this.drawArea(this.temp_area, 'red', false);
+    //temp_area_path
+    this.drawArea(this.temp_area_path, 'red', false);
   }
 
-  drawArea(area, color='yellow', close=true){
+  drawArea(area_path, color='yellow', close=true){
     let canvas_ctx=this.canvas_ctx;
-    if(area.length == 0)
+    if(area_path.length == 0)
       return;
     canvas_ctx.strokeStyle = color;
     canvas_ctx.lineWidth = 4;
 
     canvas_ctx.beginPath();
-    canvas_ctx.arc(area[0].x * this.canvas.width, area[0].y * this.canvas.height, 5, 0, Math.PI * 2);
+    canvas_ctx.arc(area_path[0].x * this.canvas.width, area_path[0].y * this.canvas.height, 5, 0, Math.PI * 2);
     canvas_ctx.fill();
-    for(let i = 1; i < area.length; i++){
-      let x = area[i].x * this.canvas.width;
-      let y = area[i].y * this.canvas.height;
+    for(let i = 1; i < area_path.length; i++){
+      let x = area_path[i].x * this.canvas.width;
+      let y = area_path[i].y * this.canvas.height;
       canvas_ctx.beginPath();
       canvas_ctx.arc(x, y, 5, 0, Math.PI * 2);
       canvas_ctx.fill();
-      canvas_ctx.moveTo(area[i - 1].x * this.canvas.width , area[i - 1].y * this.canvas.height);
+      canvas_ctx.moveTo(area_path[i - 1].x * this.canvas.width , area_path[i - 1].y * this.canvas.height);
       canvas_ctx.lineTo(x, y);
       canvas_ctx.stroke();
     }
     if(close){
-      canvas_ctx.moveTo(area[area.length-1].x * this.canvas.width , area[area.length-1].y * this.canvas.height);
-      canvas_ctx.lineTo(area[0].x * this.canvas.width , area[0].y * this.canvas.height);
+      canvas_ctx.moveTo(area_path[area_path.length-1].x * this.canvas.width , area_path[area_path.length-1].y * this.canvas.height);
+      canvas_ctx.lineTo(area_path[0].x * this.canvas.width , area_path[0].y * this.canvas.height);
       canvas_ctx.stroke();
     }
   }
