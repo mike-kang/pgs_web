@@ -49,7 +49,16 @@
       </div>
       <script>
         let editor = document.getElementById("areas-editor");
-        let monitor = document.getElementById("areas-monitor");
+        document.addEventListener('DOMContentLoaded', () => {
+        editor.setAreasChangeListener((id/*1base*/, path)=>{
+          //areaUpdateListener
+          console.log("areaUpdateListener", id, path);
+        },
+        (id)=>{
+          //areaRemoveListener
+          console.log("areaRemoveListener", id);
+        });
+      });        let monitor = document.getElementById("areas-monitor");
         function btn_set_click(){
           let id = document.getElementById("id_area_index").value - 1;
           editor.areaSet(id);

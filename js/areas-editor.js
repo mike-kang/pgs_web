@@ -1,3 +1,9 @@
+class Area {
+  constructor(path){
+    this.path = path; //array Point
+  }
+}
+
 class Point {
   //정규화된 점이다.
   constructor(x, y){
@@ -20,6 +26,7 @@ class Point {
   }
 }
 
+
 class AreasEditorDiv extends ZoomDiv {
   static TAG = '[AreasEditorDiv]';
   constructor() {
@@ -31,19 +38,19 @@ class AreasEditorDiv extends ZoomDiv {
     console.log(AreasEditorDiv.TAG, 'connectedCallback()');
     super.connectedCallback();
 
-    this.areas = new Array(20);
-    for(let i = 0; i < 20; i++){
-      this.areas[i] = null;
-    }
+    this.areas = {};
+    console.log(AreasEditorDiv.TAG, 'connectedCallback()', this.areas);
     this.temp_area_path = [];
     this.addEventListener( "click" , this.clickHandler, false);
+    this.areaUpdateListener = this.getAttribute('areaupdate');
 
   }
-
+  
   setAreasChangeListener(areaUpdateListener, areaRemoveListener){
     this.areaUpdateListener = areaUpdateListener;
     this.areaRemoveListener = areaRemoveListener;
   }
+
   clickHandler(me)    {
     console.log(AreasEditorDiv.TAG, "canvas click", me.offsetX/this.canvas.width, me.offsetY/this.canvas.height);
     //moving이 발생하면 해당 click 무시.
@@ -67,11 +74,12 @@ class AreasEditorDiv extends ZoomDiv {
   }
 
   areaSet(id){
+    console.log(AreasEditorDiv.TAG, "areaSet ", id, this);
     if(this.temp_area_path.length < 3){
       this.areaCancel();
       return;
     }
-    this.areas[id] = {path:this.temp_area_path};
+    this.areas[id] = new Area(this.temp_area_path);
     this.temp_area_path = [];    
     this.drawAreas();
     this.areaUpdateListener(id + 1, this.areas[id].path);
@@ -82,7 +90,7 @@ class AreasEditorDiv extends ZoomDiv {
     this.drawAreas();
   }
   areaRemove(id){
-    this.areas[id] = null;
+    delete this.areas[id];
     this.drawAreas();
     this.areaRemoveListener(id + 1);
   }
@@ -94,13 +102,10 @@ class AreasEditorDiv extends ZoomDiv {
     console.log(this.areas);
     return this.areas;
   }
-  //정규화된 점들로 이뤄진 path를 가진 area의 배열
+  //정규화된 점들로 이뤄진 path를 가진 area의 map
   setAreas(areas){
     for(let i = 0; i < areas.length; i++){
-      if(areas[i] == null){
-        this.areas[i] = null;
-      }
-      else{
+      if(areas[i]){
         this.areas[i].path = areas[i].path;
       }
     }
@@ -129,9 +134,9 @@ class AreasEditorDiv extends ZoomDiv {
     canvas_ctx.font = fontSize + 'px serif'; 
     canvas_ctx.fillStyle = 'yellow';
  
-    for(let i = 0; i < this.areas.length; i++){
-      let area = this.areas[i];
-      if(area != null){
+    for(const id in this.areas){
+      let area = this.areas[id];
+      if(area){
         this.drawArea(area.path);
 
         //display id
@@ -141,10 +146,9 @@ class AreasEditorDiv extends ZoomDiv {
           center_x += point.x * this.canvas.width;
           center_y += point.y * this.canvas.height;
         });
-        center_x /= area.length;
-        center_y /= area.length;
-
-        canvas_ctx.fillText(i + 1, center_x, center_y);
+        center_x /= area.path.length;
+        center_y /= area.path.length;
+        canvas_ctx.fillText(Number(id) + 1, center_x, center_y);
         //canvas_ctx.strokeText(i + 1, center_x, center_y);
       }
     }
