@@ -59,10 +59,10 @@ class AreasEditorDiv extends ZoomDiv {
       return;
     }
     this.canvas_ctx.strokeStyle = 'red';
-    this.canvas_ctx.lineWidth = 4;
+    this.canvas_ctx.lineWidth = 3;
 
     this.canvas_ctx.beginPath();
-    this.canvas_ctx.arc(me.offsetX , me.offsetY, 5, 0, Math.PI * 2);
+    this.canvas_ctx.arc(me.offsetX , me.offsetY, 1, 0, Math.PI * 2);
     if(this.temp_area_path.length > 0){
       this.canvas_ctx.moveTo(this.temp_area_path[this.temp_area_path.length-1].x * this.canvas.width , this.temp_area_path[this.temp_area_path.length-1].y * this.canvas.height);
       this.canvas_ctx.lineTo(me.offsetX , me.offsetY);
@@ -82,7 +82,7 @@ class AreasEditorDiv extends ZoomDiv {
     this.areas[id] = new Area(this.temp_area_path);
     this.temp_area_path = [];    
     this.drawAreas();
-    this.areaUpdateListener(id + 1, this.areas[id].path);
+    this.areaUpdateListener(id, this.areas[id].path);
 
   }
   areaCancel(){
@@ -92,7 +92,7 @@ class AreasEditorDiv extends ZoomDiv {
   areaRemove(id){
     delete this.areas[id];
     this.drawAreas();
-    this.areaRemoveListener(id + 1);
+    this.areaRemoveListener(id);
   }
   areaBack(id){
     this.temp_area_path.pop();
@@ -104,11 +104,7 @@ class AreasEditorDiv extends ZoomDiv {
   }
   //정규화된 점들로 이뤄진 path를 가진 area의 map
   setAreas(areas){
-    for(let i = 0; i < areas.length; i++){
-      if(areas[i]){
-        this.areas[i].path = areas[i].path;
-      }
-    }
+    this.areas = areas;
     this.temp_area_path = [];    
 
     this.drawAreas();
@@ -148,7 +144,7 @@ class AreasEditorDiv extends ZoomDiv {
         });
         center_x /= area.path.length;
         center_y /= area.path.length;
-        canvas_ctx.fillText(Number(id) + 1, center_x, center_y);
+        canvas_ctx.fillText(id, center_x, center_y);
         //canvas_ctx.strokeText(i + 1, center_x, center_y);
       }
     }
@@ -161,17 +157,17 @@ class AreasEditorDiv extends ZoomDiv {
     if(area_path.length == 0)
       return;
     canvas_ctx.strokeStyle = color;
-    canvas_ctx.lineWidth = 4;
+    canvas_ctx.lineWidth = 3;
 
     canvas_ctx.beginPath();
-    canvas_ctx.arc(area_path[0].x * this.canvas.width, area_path[0].y * this.canvas.height, 5, 0, Math.PI * 2);
-    canvas_ctx.fill();
+    //canvas_ctx.arc(area_path[0].x * this.canvas.width, area_path[0].y * this.canvas.height, 5, 0, Math.PI * 2);
+    //canvas_ctx.fill();
     for(let i = 1; i < area_path.length; i++){
       let x = area_path[i].x * this.canvas.width;
       let y = area_path[i].y * this.canvas.height;
       canvas_ctx.beginPath();
-      canvas_ctx.arc(x, y, 5, 0, Math.PI * 2);
-      canvas_ctx.fill();
+      //canvas_ctx.arc(x, y, 5, 0, Math.PI * 2);
+      //canvas_ctx.fill();
       canvas_ctx.moveTo(area_path[i - 1].x * this.canvas.width , area_path[i - 1].y * this.canvas.height);
       canvas_ctx.lineTo(x, y);
       canvas_ctx.stroke();

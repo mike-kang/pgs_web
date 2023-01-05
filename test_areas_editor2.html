@@ -43,34 +43,42 @@
       </span>
     </div>
     <script>
-      let editor = document.getElementById("areas-editor");
-      document.addEventListener('DOMContentLoaded', () => {
-        editor.setAreasChangeListener((id/*1base*/, path)=>{
-          //areaUpdateListener
-          console.log("areaUpdateListener", id, path);
-        },
-        (id)=>{
-          //areaRemoveListener
-          console.log("areaRemoveListener", id);
-        });
-      });      function btn_set_click(){
-        let id = document.getElementById("id_area_index").value - 1;
+      let mapAreas = {};
+      let editor;
+      document.addEventListener('DOMContentLoaded', 
+        () => {
+          editor = document.getElementById("areas-editor");
+          editor.setAreasChangeListener(
+            (id, path)=>{
+              //areaUpdateListener
+              console.log("areaUpdateListener", id, path);
+            },
+            (id)=>{
+              //areaRemoveListener
+              console.log("areaRemoveListener", id);
+            }
+          );
+          editor.setAreas(mapAreas);
+        }
+      );     
+      function btn_set_click(){
+        let id = document.getElementById("id_area_index").value;
         editor.areaSet(id);
       }
       function btn_cancel_click(){
-        let id = document.getElementById("id_area_index").value - 1;
+        let id = document.getElementById("id_area_index").value;
         editor.areaCancel(id);
       }
       function btn_back_click(){
-        let id = document.getElementById("id_area_index").value - 1;
+        let id = document.getElementById("id_area_index").value;
         editor.areaBack(id);
       }
       function btn_remove_click(){
-        let id = document.getElementById("id_area_index").value - 1;
+        let id = document.getElementById("id_area_index").value;
         editor.areaRemove(id);
       }
       function btn_getAreas_click(){
-        let id = document.getElementById("id_area_index").value - 1;
+        let id = document.getElementById("id_area_index").value;
         editor.getAreas();
       }
       function btn_mode_switch_click(){
@@ -88,7 +96,7 @@
         }
       window.addEventListener("keydown", (ev) => {
         console.log("keydown", ev.keyCode);
-        let id = document.getElementById("id_area_index").value - 1;
+        let id = document.getElementById("id_area_index").value;
         switch(ev.keyCode){
         case 13:/*enter*/
           editor.areaSet(id)

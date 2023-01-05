@@ -40,14 +40,13 @@ class AreasEditorDiv2 extends AreasEditorDiv {
     console.log(AreasEditorDiv2.TAG, "onChangeMove", dx, dy);
     let my = this.client;
     
-    for(let j = 0; j < my.areas.length; j++){
-      let area = my.areas[j];
-      if(area != null){
-        let area_path = area.path;
-        for(let i = 0; i < area_path.length; i++){
-          area_path[i].x += dx / my.canvas.width;
-          area_path[i].y += dy / my.canvas.height;
-        }
+    for(const id in my.areas){
+      let area = my.areas[id];
+      if(area){
+        area.path.forEach(point => {
+          point.x += dx / my.canvas.width;
+          point.y += dy / my.canvas.height;
+        });
       }
     }
     my.drawAreas();
@@ -56,14 +55,13 @@ class AreasEditorDiv2 extends AreasEditorDiv {
   onChangeAngle(da/*radian*/){
     console.log(AreasEditorDiv2.TAG, "onChangeAngle", da);
     let my = this.client;
-    for(let j = 0; j < my.areas.length; j++){
-      let area = my.areas[j];
-      if(area != null){
-        let area_path = area.path;
-        for(let i = 0; i < area_path.length; i++){
-          console.log(AreasEditorDiv2.TAG, "onChangeAngle", area_path[i]);
-          area_path[i].addAngle(new Point(0.5, 0.5), da);
-        }
+    for(const id in my.areas){
+      let area = my.areas[id];
+      if(area){
+        area.path.forEach(point => {
+          console.log(AreasEditorDiv2.TAG, "onChangeAngle", point);
+          point.addAngle(new Point(0.5, 0.5), da);
+        });
       }
     }
     my.drawAreas();
