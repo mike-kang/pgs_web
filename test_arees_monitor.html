@@ -10,10 +10,11 @@
 </head>
 <body>
     <div style="margin-left: 50px;">
-        <div is="areas-monitor" style="width:1000px; height:1000px; position:relative; overflow:auto" background="qdis-player">
+        <div is="areas-monitor" style="width:1000px; height:1000px; position:relative; overflow:auto" background="qdis-player" canvas="canvas">
           <video id="qdis-player" style="width:2000px; height:2000px" controls autoplay muted="muted">
             해당 브라우저는 스트리밍을 지원하지 않습니다.
-        </video>
+          </video>
+          <canvas id="canvas"></canvas>
     </div>
     </div>
     <script>
@@ -38,7 +39,7 @@
 
         // TODO : URL, 채널, 영상정보 수신부 구현 필요. 현재 임시 상수 적용
         //hostName = '106.248.203.183';
-        hostName = '192.168.150.237';
+        hostName = '192.168.150.235';
 
         channel = 'ch0';
         codec = 'H264';

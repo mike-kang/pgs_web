@@ -8,8 +8,13 @@ class AreasMonitorDiv extends ZoomDiv {
   connectedCallback() {
     console.log(AreasMonitorDiv.TAG, 'connectedCallback()');
     super.connectedCallback();
-    this.areas = [];
+    this.canvas = document.getElementById(this.getAttribute('canvas'));
+    this.canvas_ctx = this.canvas.getContext('2d');
 
+    this.canvas.width = this.background_width;
+    this.canvas.height = this.background_height;
+
+    this.areas = [];
   }
 
   setAreas(areas){

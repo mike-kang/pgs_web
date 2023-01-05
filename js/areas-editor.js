@@ -37,12 +37,16 @@ class AreasEditorDiv extends ZoomDiv {
   connectedCallback() {
     console.log(AreasEditorDiv.TAG, 'connectedCallback()');
     super.connectedCallback();
+    this.canvas = document.getElementById(this.getAttribute('canvas'));
+    this.canvas_ctx = this.canvas.getContext('2d');
+
+    this.canvas.width = this.background_width;
+    this.canvas.height = this.background_height;
 
     this.areas = {};
     console.log(AreasEditorDiv.TAG, 'connectedCallback()', this.areas);
     this.temp_area_path = [];
     this.addEventListener( "click" , this.clickHandler, false);
-    this.areaUpdateListener = this.getAttribute('areaupdate');
 
   }
   
@@ -52,24 +56,25 @@ class AreasEditorDiv extends ZoomDiv {
   }
 
   clickHandler(me)    {
-    console.log(AreasEditorDiv.TAG, "canvas click", me.offsetX/this.canvas.width, me.offsetY/this.canvas.height);
+    console.log(AreasEditorDiv.TAG, "canvas click", me.offsetX/this.background_width, me.offsetY/this.background_height);
     //moving이 발생하면 해당 click 무시.
     if(this.isMoved){
       this.isMoved = false;
       return;
     }
+
     this.canvas_ctx.strokeStyle = 'red';
     this.canvas_ctx.lineWidth = 3;
 
     this.canvas_ctx.beginPath();
     this.canvas_ctx.arc(me.offsetX , me.offsetY, 1, 0, Math.PI * 2);
     if(this.temp_area_path.length > 0){
-      this.canvas_ctx.moveTo(this.temp_area_path[this.temp_area_path.length-1].x * this.canvas.width , this.temp_area_path[this.temp_area_path.length-1].y * this.canvas.height);
+      this.canvas_ctx.moveTo(this.temp_area_path[this.temp_area_path.length-1].x * this.background_width , this.temp_area_path[this.temp_area_path.length-1].y * this.background_height);
       this.canvas_ctx.lineTo(me.offsetX , me.offsetY);
       this.canvas_ctx.stroke();
     }
     this.canvas_ctx.fill();
-    this.temp_area_path.push(new Point(me.offsetX / this.canvas.width, me.offsetY / this.canvas.height));
+    this.temp_area_path.push(new Point(me.offsetX / this.background_width, me.offsetY / this.background_height));
 
   }
 
@@ -112,6 +117,8 @@ class AreasEditorDiv extends ZoomDiv {
 
   onCanvasResize(){
     //console.log(AreasEditorDiv.TAG, "onCanvasResize");
+    this.canvas.width = this.background_width;
+    this.canvas.height = this.background_height;
     this.drawAreas();
   }
   onCanvasMove(){
@@ -120,6 +127,7 @@ class AreasEditorDiv extends ZoomDiv {
 
   drawAreas(canvas_ctx=this.canvas_ctx, clear=true){
     console.log(AreasEditorDiv.TAG, "drawAreas");
+
     if(clear)
       canvas_ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
     var fontSize = 24;

@@ -1,3 +1,8 @@
+//ZoomDiv는 div elemnet를 상속받은 class이다.
+//container 역할을 하며, 포함하는 element들을 zoom in/out할 수 있게 하며, 자동으로 스크롤이 생성된다. 
+//ctrl + wheel로 zoom in/out이 되며,
+//mouse down + move로 화면을 이동할 수 있다.
+//child element들 중, size 맞추기 위한 기준이되는 것을 background로 정한다. 
 class ZoomDiv extends HTMLDivElement {
   static TAG = '[ZoomDiv]';
   constructor() {
@@ -7,17 +12,23 @@ class ZoomDiv extends HTMLDivElement {
 
   connectedCallback() {
       console.log(ZoomDiv.TAG, 'connectedCallback()');
-      this.canvas = document.createElement('canvas');
-      this.canvas_ctx = this.canvas.getContext('2d');
       this.background = document.getElementById(this.getAttribute('background'));
-      this.canvas.width = Number(this.background.style.width.replace('px', ''));
-      this.canvas.height = Number(this.background.style.height.replace('px', ''));
-      this.canvas.style.position = 'absolute';
-      this.background.style.position = 'absolute';
-      this.appendChild(this.canvas);
+      this.background_width = Number(this.background.style.width.replace('px', ''));
+      this.background_height = Number(this.background.style.height.replace('px', ''));
+
+      for (const child of this.children) {
+        console.log(ZoomDiv.TAG, child.tagName);
+      }
+      for (let child of this.children) {
+        child.style.width = this.background_width + 'px';
+        child.style.height = this.background_height + 'px';
+        child.style.position = 'absolute';
+      }
 
       this.width = Number(this.style.width.replace('px', ''));
       this.height = Number(this.style.height.replace('px', ''));
+      //console.log(ZoomDiv.TAG, 'connectedCallback()', this.width);
+
       //default zoom enable
       if(this.getAttribute('zoom') == null){
         this.setAttribute('zoom', 'enable');
@@ -69,7 +80,7 @@ class ZoomDiv extends HTMLDivElement {
  * @param {*} e 
  */
   mouseDownHandler(me){
-    console.log("mousedown", me.offsetX/this.canvas.width, me.offsetY/this.canvas.height);
+    //console.log("mousedown", me.offsetX/this.background_width, me.offsetY/this.background_height);
 
     this.mouse_grab_pos = {
       left: this.scrollLeft,
@@ -86,7 +97,7 @@ class ZoomDiv extends HTMLDivElement {
  * @param {*} e 
  */
   mouseMoveHandler(e) {
-    console.log('mouseMoveHandler', e.movementX);
+    //console.log('mouseMoveHandler', e);
     
     const dx = e.clientX - this.mouse_grab_pos.x;
     const dy = e.clientY - this.mouse_grab_pos.y;
@@ -101,13 +112,14 @@ class ZoomDiv extends HTMLDivElement {
           this.onCanvasMove();
         //isMoved = true;
     }
+    
   };
 
   /**
   * 확대시 화면 이동을 위해
   */
   mouseUpHandler() {
-    console.log('mouseUpHandler');
+    //console.log('mouseUpHandler');
 
     this.removeEventListener('mousemove', this.mouseMoveHandler, false);
     this.removeEventListener('mouseup', this.mouseUpHandler, false);
@@ -126,19 +138,22 @@ class ZoomDiv extends HTMLDivElement {
     else  
       scale = (delta > 0)? 0.9 : 1.1;
     
-    let preWidth = this.canvas.width;
-    let preHight = this.canvas.height;
+    let preWidth = this.background_width;
+    let preHight = this.background_height;
 
-    this.canvas.width *= scale;
-    this.canvas.height *= scale;
-    this.canvas.width = Math.max(this.canvas.width, this.width);
-    this.canvas.height = Math.max(this.canvas.height, this.height);
+    this.background_width *= scale;
+    this.background_height *= scale;
+    this.background_width = Math.max(this.background_width, this.width);
+    this.background_height = Math.max(this.background_height, this.height);
 
-    this.canvas.style.width = this.background.style.width = this.canvas.width + 'px';
-    this.canvas.style.height = this.background.style.height = this.canvas.height + 'px';
+    for (let child of this.children) {
+      child.style.width = this.background_width + 'px';
+      child.style.height = this.background_height + 'px';
+    }
+
     //console.log('this.canvas.style.width = ' + this.canvas.width, this.canvas.style.width);
-    this.scrollLeft += (this.canvas.width - preWidth) / 2;
-    this.scrollTop += (this.canvas.height - preHight) / 2;
+    this.scrollLeft += (this.background_width - preWidth) / 2;
+    this.scrollTop += (this.background_height - preHight) / 2;
     if(this.onCanvasResize != undefined)
       this.onCanvasResize();
 
