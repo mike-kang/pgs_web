@@ -21,8 +21,8 @@ class TranferHandle {
   static STATE_ROTATION = 2;
 
   angle = 0; //radian
-  rotation_handle_radius = 60;
-  move_handle_radius = 60;
+  rotation_handle_radius = 80;
+  move_handle_radius = 80;
   state = TranferHandle.STATE_NONE;
 
   mousedown(self, e) {
