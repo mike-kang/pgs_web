@@ -108,9 +108,10 @@ class ZoomDiv extends HTMLDivElement {
 
         this.style.cursor = 'grabbing';
         this.style.userSelect = 'none';
-        if(this.onCanvasMove != undefined)
-          this.onCanvasMove();
-        //isMoved = true;
+        for (let child of this.children) {
+          if(child.onCanvasMove != undefined)
+            child.onCanvasMove();
+        }
     }
     
   };

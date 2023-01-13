@@ -101,11 +101,11 @@ class AreasEditorBaseCanvas extends HTMLCanvasElement {
   }
 
   draw(clear=true){
-    console.log(AreasEditorBaseCanvas.TAG, "draw");
+    console.log(AreasEditorBaseCanvas.TAG, "draw", this);
     let canvas_ctx = this.canvas_ctx;
     if(clear)
       canvas_ctx.clearRect(0, 0, this.width, this.height);
-    var fontSize = 24;
+    var fontSize = 60;
     canvas_ctx = this.canvas_ctx;
     canvas_ctx.lineWidth = 2;
 

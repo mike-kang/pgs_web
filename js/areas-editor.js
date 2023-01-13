@@ -30,10 +30,10 @@ class AreasEditorCanvas extends AreasEditorBaseCanvas {
     }
 
     this.canvas_ctx.strokeStyle = 'red';
-    this.canvas_ctx.lineWidth = 3;
+    this.canvas_ctx.lineWidth = 5;
 
     this.canvas_ctx.beginPath();
-    this.canvas_ctx.arc(sx * this.width , sy * this.height, 1, 0, Math.PI * 2);
+    this.canvas_ctx.arc(sx * this.width , sy * this.height, 3, 0, Math.PI * 2);
     if(this.temp_area.path.length > 0){
       this.canvas_ctx.moveTo(this.temp_area.path[this.temp_area.path.length-1].x * this.width , this.temp_area.path[this.temp_area.path.length-1].y * this.height);
       this.canvas_ctx.lineTo(sx * this.width , sy * this.height);
