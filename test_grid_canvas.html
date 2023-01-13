@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>QdisPlayer RTSP player example</title>
+    <script src="js/grid-canvas.js" defer=""></script>
+</head>
+<body>
+    <div style="margin-left: 10px; ">
+      <img id="capture-img" style="width:1000px; height:1000px; position: absolute;" src="capture.jpg">
+      <canvas is="grid-canvas" id="grid-editor" style="width:1000px; height:1000px; position: absolute; " count_x="32" count_y="32"></canvas>
+    </div>
+    <script>
+      let mapAreas = {};
+      let editor;
+
+      document.addEventListener('DOMContentLoaded', 
+        () => {
+        editor = document.getElementById("grid-editor");
+      });
+
+      window.addEventListener("keydown", (ev) => {
+        console.log("keydown");
+        switch(ev.keyCode){
+        case 13:/*enter*/
+          editor.areaSet(0)
+          break;
+        case 8:/*back space*/
+          editor.areaBack(id)
+          break;
+        case 27:/*esc*/
+          editor.areaCancel(id)
+          break;
+        }
+      });
+      </script>
+</body>
+</html>

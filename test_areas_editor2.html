@@ -5,15 +5,17 @@
     <title>QdisPlayer RTSP player example</title>
     <link rel="stylesheet" href="css/style.css">
     <script src="js/zoom-div.js" defer=""></script>
-    <script src="js/areas-editor.js" defer=""></script>
+    <script src="js/areas-editor-base.js" defer=""></script>
     <script src="js/transfer-handle.js" defer=""></script>
-    <script src="js/areas-editor2.js" defer=""></script>
+    <script src="js/areas-editor.js" defer=""></script>
+    <script src="js/areas-transfer-editor.js" defer=""></script>
 </head>
 <body>
     <div style="margin-left: 50px;">
-        <div is="areas-editor2" id="areas-editor" style="width:1000px; height:1000px; position:relative; overflow:auto" background="capture-img">
+        <div is="zoom-div" id="areas-editor" style="width:1000px; height:1000px; position:relative; overflow:auto" background="capture-img">
             <img id="capture-img" style="width:2000px; height:2000px" src="capture.jpg">
-            <canvas id="canvas"></canvas>
+            <canvas is="areas-editor-canvas" id="areas-editor-canvas" height="3008" width="3008"></canvas>
+            <canvas is="areas-transfer-editor-canvas" id="areas-transfer-editor-canvas" height="3008" width="3008" style="display:none"></canvas>
           </div>
     </div>
     <div>
@@ -46,9 +48,10 @@
     <script>
       let mapAreas = {};
       let editor;
+      let editor_transfer;
       document.addEventListener('DOMContentLoaded', 
         () => {
-          editor = document.getElementById("areas-editor");
+          editor = document.getElementById("areas-editor-canvas");
           editor.setAreasChangeListener(
             (id, path)=>{
               //areaUpdateListener
@@ -60,6 +63,7 @@
             }
           );
           editor.setAreas(mapAreas);
+          editor_transfer = document.getElementById("areas-transfer-editor-canvas");
         }
       );     
       function btn_set_click(){
@@ -84,13 +88,19 @@
       }
       function btn_mode_switch_click(){
           let btn = document.getElementById("btn_switch");
-          console.log("btn_switch_click", btn.value);
+          console.log("btn_switch_click", btn.value, editor_transfer);
           if(btn.value == 'transfer'){
-            editor.setMode(AreasEditorDiv2.MODE_TRANSFER);
+            document.getElementById("areas-editor").setAttribute('zoom', 'disable');
+            editor.style.display = 'none';
+            editor_transfer.style.display = 'block';
+            editor_transfer.setAreas(mapAreas);
             btn.value = 'normal';
           }
           else{
-            editor.setMode(AreasEditorDiv2.MODE_NORMAL);
+            document.getElementById("areas-editor").setAttribute('zoom', 'enable');
+            editor.style.display = 'block';
+            editor_transfer.style.display = 'none';
+            editor.setAreas(mapAreas);
             btn.value = 'transfer';
           }
 

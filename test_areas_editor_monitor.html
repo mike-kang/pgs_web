@@ -11,15 +11,15 @@
 </head>
 <body>
     <div style="margin-left: 50px;">
-      <div is="areas-editor" id="areas-editor" style="width:1000px; height:1000px; position:relative; overflow:auto" background="capture-img" canvas="canvas_editor">
-        <img id="capture-img" style="width:2000px; height:2000px" src="capture.jpg">
-        <canvas id="canvas_editor"></canvas>
+      <div is="zoom-div" id="areas-editor" style="width:1000px; height:1000px; position:relative; overflow:auto" background="capture-img">
+        <img id="capture-img" style="width:1000px; height:1000px" src="capture.jpg">
+        <canvas is="areas-editor-canvas" id="areas-editor-canvas" style="width:1000px; height:1000px" height="3008" width="3008"></canvas>
       </div>
-      <div is="areas-monitor" id="areas-monitor" style="width:1000px; height:1000px; position:relative; overflow:auto; display:none" background="qdis-player" canvas="canvas_monitor">
+      <div is="zoom-div" id="areas-monitor" style="width:1000px; height:1000px; position:relative; overflow:auto; display:none" background="qdis-player">
         <video id="qdis-player" style="width:2000px; height:2000px" controls autoplay muted="muted" onresize="videoResize()">
           해당 브라우저는 스트리밍을 지원하지 않습니다.
         </video>
-        <canvas id="canvas_monitor"></canvas>
+        <canvas is="areas-monitor-canvas" id="areas-monitor-canvas" style="width:1000px; height:1000px" height="3008" width="3008"></canvas>
       </div>
     </div>
     <div>
@@ -54,8 +54,8 @@
         let editor;
         let monitor;
         document.addEventListener('DOMContentLoaded', () => {
-          editor = document.getElementById("areas-editor");
-          monitor = document.getElementById("areas-monitor");
+          editor = document.getElementById("areas-editor-canvas");
+          monitor = document.getElementById("areas-monitor-canvas");
           editor.setAreasChangeListener(
             (id/*1base*/, path)=>{
               //areaUpdateListener
@@ -91,16 +91,19 @@
         function btn_switch_click(){
           let btn = document.getElementById("btn_switch");
           console.log("btn_switch_click", btn.value);
+          let editor_div = document.getElementById("areas-editor");
+          let monitor_div = document.getElementById("areas-monitor");
+
           if(btn.value == 'monitor'){
-            editor.style.display = 'none';
-            monitor.style.display = 'block';
+            editor_div.style.display = 'none';
+            monitor_div.style.display = 'block';
             monitor.setAreas(mapAreas);
             btn.value = 'editor'
             setPlayerSource('rtsp://' + '192.168.150.235' + '/' + 'ch0');
           }
           else{
-            editor.style.display = 'block';
-            monitor.style.display = 'none';
+            editor_div.style.display = 'block';
+            monitor_div.style.display = 'none';
             btn.value = 'monitor'
             if (wsPlayer) {
               wsPlayer.destroy();

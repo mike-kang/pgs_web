@@ -154,9 +154,12 @@ class ZoomDiv extends HTMLDivElement {
     //console.log('this.canvas.style.width = ' + this.canvas.width, this.canvas.style.width);
     this.scrollLeft += (this.background_width - preWidth) / 2;
     this.scrollTop += (this.background_height - preHight) / 2;
-    if(this.onCanvasResize != undefined)
-      this.onCanvasResize();
-
+    
+    for (let child of this.children) {
+      if(child.onCanvasResize != undefined)
+        child.onCanvasResize(this.background_width, this.background_height);
+    }
+  
   }
 
 

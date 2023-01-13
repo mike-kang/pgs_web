@@ -5,13 +5,14 @@
     <title>QdisPlayer RTSP player example</title>
     <link rel="stylesheet" href="css/style.css">
     <script src="js/zoom-div.js" defer=""></script>
+    <script src="js/areas-editor-base.js" defer=""></script>
     <script src="js/areas-editor.js" defer=""></script>
 </head>
 <body>
     <div style="margin-left: 50px;">
-        <div is="areas-editor" id="areas-editor" style="width:1000px; height:1000px; position:relative; overflow:auto" background="capture-img" canvas="canvas">
+        <div is="zoom-div"  style="width:1000px; height:1000px; position:relative; overflow:auto" background="capture-img" canvas="canvas">
           <img id="capture-img" style="width:2000px; height:2000px" src="capture.jpg">
-          <canvas id="canvas"></canvas>
+          <canvas is="areas-editor-canvas" id="areas-editor" height="3008" width="3008"></canvas>
         </div>
     </div>
     <div>
